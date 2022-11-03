@@ -1,0 +1,50 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  sam-hello-world
+
+  Sample SAM Template for sam-hello-world
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 120
+
+Resources:
+  HelloWorldFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: hello-world/
+      Handler: app.lambdaHandler
+      Runtime: nodejs14.x
+      Architectures:
+        - x86_64
+      Layers:
+        - arn:aws:lambda:eu-west-2:269863060030:layer:merloc-gatekeeper:12
+      Environment:
+        Variables:
+          AWS_LAMBDA_EXEC_WRAPPER: /opt/extensions/merloc-gatekeeper-ext/bootstrap
+          MERLOC_BROKER_URL: wss://pmn3tbae59.execute-api.eu-west-2.amazonaws.com/dev
+          MERLOC_SAM_FUNCTION_NAME: HelloWorldFunction
+    Metadata: # Manage esbuild properties
+      BuildMethod: makefile
+      # BuildProperties:
+      #   Minify: false
+      #   Target: "es2020"
+      #   Sourcemap: true
+      #   # Sourcemap: true # Enabling source maps will create the required NODE_OPTIONS environment variables on your lambda function during sam build
+      #   EntryPoints:
+      #    - app.ts
+# Outputs:
+#   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+#   # Find out more about other implicit resources you can reference within SAM
+#   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+#   HelloWorldApi:
+#     Description: "API Gateway endpoint URL for Prod stage for Hello World function"
+#     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+#   HelloWorldFunction:
+#     Description: "Hello World Lambda Function ARN"
+#     Value: !GetAtt HelloWorldFunction.Arn
+#   HelloWorldFunctionIamRole:
+#     Description: "Implicit IAM Role created for Hello World function"
+#     Value: !GetAtt HelloWorldFunctionRole.Arn
